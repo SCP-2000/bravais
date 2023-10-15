@@ -77,7 +77,7 @@ states = init_states
 
 src = cv2.VideoCapture("/home/nickcao/The Cha Cha Slide Dance [I1gMUbEAUFw].mp4")
 
-dst = cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), src.get(cv2.CAP_PROP_FPS), (1280, 720))
+dst = cv2.VideoWriter("output.webm", cv2.VideoWriter_fourcc(*'VP90'), src.get(cv2.CAP_PROP_FPS), (1280, 720))
 
 while True:
     ret, frame = src.read()
