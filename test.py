@@ -74,15 +74,23 @@ init_states = {
 # To run on a video, pass in one frame at a time.
 states = init_states
 
+
 src = cv2.VideoCapture("/home/nickcao/The Cha Cha Slide Dance [I1gMUbEAUFw].mp4")
 
+dst = cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), src.get(cv2.CAP_PROP_FPS), (720, 1280), False)
+
+i = 100
 while True:
+    if i == 0:
+        break
+    i -= 1
     ret, frame = src.read()
     if not ret:
         break
+    f = frame
+
     frame = tf.image.resize_with_pad(frame, 224, 224)
     frame = tf.cast(frame, tf.float32) / 255.0
-    f = frame
     frame = frame[tf.newaxis, tf.newaxis, ...]
 
     # Normally the input frame is normalized to [0, 1] with dtype float32, but
@@ -94,5 +102,14 @@ while True:
     logits = outputs.pop("logits")
     states = outputs
 
+    labeled = False
     for label, p in get_top_k(logits[-1], k=1):
+        if not labeled:
+            f = cv2.putText(f, label, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            labeled = True
         print(f"{label:20s}: {p:.3f}")
+
+    dst.write(f)
+
+src.release()
+dst.release()
