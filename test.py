@@ -1,6 +1,10 @@
 import tensorflow as tf
 import numpy as np
 import pathlib
+import cv2
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import PIL
 
 labels_path = tf.keras.utils.get_file(
     fname="labels.txt",
@@ -11,41 +15,6 @@ labels_path = pathlib.Path(labels_path)
 lines = labels_path.read_text().splitlines()
 
 KINETICS_600_LABELS = np.array([line.strip() for line in lines])
-
-jumpingjack_url = "https://github.com/tensorflow/models/raw/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/jumpingjack.gif"
-jumpingjack_path = tf.keras.utils.get_file(
-    fname="jumpingjack.gif",
-    origin=jumpingjack_url,
-)
-
-
-def load_gif(file_path, image_size=(224, 224)):
-    """Loads a gif file into a TF tensor.
-
-    Use images resized to match what's expected by your model.
-    The model pages say the "A2" models expect 224 x 224 images at 5 fps
-
-    Args:
-      file_path: path to the location of a gif file.
-      image_size: a tuple of target size.
-
-    Returns:
-      a video of the gif file
-    """
-    # Load a gif file, convert it to a TF tensor
-    raw = tf.io.read_file(file_path)
-    video = tf.io.decode_gif(raw)
-    # Resize the video
-    video = tf.image.resize(video, image_size)
-    # change dtype to a float32
-    # Hub models always want images normalized to [0,1]
-    # ref: https://www.tensorflow.org/hub/common_signatures/images#input
-    video = tf.cast(video, tf.float32) / 255.0
-    return video
-
-
-jumpingjack = load_gif(jumpingjack_path)
-
 
 def get_top_k(probs, k=5, label_map=KINETICS_600_LABELS):
     """Outputs the top k model labels and probabilities on the given video.
@@ -104,8 +73,18 @@ init_states = {
 
 # To run on a video, pass in one frame at a time.
 states = init_states
-for n in range(len(jumpingjack)):
-    frame = jumpingjack[tf.newaxis, n : n + 1, ...]
+
+src = cv2.VideoCapture("/home/nickcao/The Cha Cha Slide Dance [I1gMUbEAUFw].mp4")
+
+while True:
+    ret, frame = src.read()
+    if not ret:
+        break
+    frame = tf.image.resize_with_pad(frame, 224, 224)
+    frame = tf.cast(frame, tf.float32) / 255.0
+    f = frame
+    frame = frame[tf.newaxis, tf.newaxis, ...]
+
     # Normally the input frame is normalized to [0, 1] with dtype float32, but
     # here we apply quantized scaling to fit values into the quantized dtype.
     frame = quantized_scale("image", frame)
