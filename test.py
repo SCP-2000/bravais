@@ -77,13 +77,9 @@ states = init_states
 
 src = cv2.VideoCapture("/home/nickcao/The Cha Cha Slide Dance [I1gMUbEAUFw].mp4")
 
-dst = cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), src.get(cv2.CAP_PROP_FPS), (720, 1280), False)
+dst = cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'MP4V'), src.get(cv2.CAP_PROP_FPS), (1280, 720))
 
-i = 100
 while True:
-    if i == 0:
-        break
-    i -= 1
     ret, frame = src.read()
     if not ret:
         break
