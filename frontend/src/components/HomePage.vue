@@ -1,3 +1,7 @@
+<script setup>
+import InfoDisplay from './InfoDisplay.vue'
+</script>
+
 <template>
 <header role="banner" class="gem-c-layout-super-navigation-header" data-module="gem-track-click ga4-event-tracker ga4-link-tracker" data-track-links-only="" data-ga4-expandable="" data-gem-track-click-module-started="true" data-ga4-event-tracker-module-started="true" data-ga4-link-tracker-module-started="true">
   <div class="gem-c-layout-super-navigation-header__container govuk-clearfix">
@@ -14,7 +18,7 @@
             <img src="/assets/static/govuk-logotype-crown-66ad9a9b8fca42cf0ba18979eef6afc2e8056d5f158ca9b27ce9afdf852aae87.png" alt="" class="govuk-header__logotype-crown-fallback-image" width="36" height="32">
             <![endif]-->
               <span class="govuk-header__logotype-text">
-                GOV.UK
+                Bravais
               </span>
           </span>
 </a>
@@ -233,12 +237,20 @@
 <header class="homepage-inverse-header">
   <div class="govuk-width-container">
     <h1 class="homepage-inverse-header__title" data-ga4-scroll-marker="" data-ga4-scrolltracker-already-seen="true">
-      Welcome to&nbsp;GOV.UK
+      Welcome to Bravais
     </h1>
-    <p class="homepage-inverse-header__intro">The best place to find government services and&nbsp;information</p>
-    <p class="homepage-inverse-header__intro homepage-inverse-header__intro--bold">Simpler, clearer, faster</p>
+    <p class="homepage-inverse-header__intro">The best app for ASD screening</p>
+    <p class="homepage-inverse-header__intro homepage-inverse-header__intro--bold">Accurate, Accessible, Affordable</p>
   </div>
 </header>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <InfoDisplay />
+  </div>
+  <div class="govuk-grid-column-one-half">
+    <InfoDisplay />
+  </div>
+</div>
 <footer class="govuk-footer " role="contentinfo">
   <div class="govuk-width-container ">
     <div class="govuk-footer__meta">
