@@ -1,5 +1,5 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import HomePage from './components/HomePage.vue'
 </script>
 
 <script>
@@ -12,10 +12,9 @@ export default {
 
 <template>
   <main>
-    <HelloWorld msg="You did it!" />
+    <HomePage />
   </main>
 </template>
 
-<style scoped>
-
+<style>
 </style>
