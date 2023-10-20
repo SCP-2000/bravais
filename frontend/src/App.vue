@@ -6,13 +6,9 @@ import TheWelcome from './components/TheWelcome.vue'
 
 <script>
 export default {
-    mounted() {
-      let govukjs = document.createElement('script')
-      govukjs.setAttribute('src', '/src/govuk.js')
-      document.head.appendChild(govukjs)
-
-      window.GOVUKFrontend.initAll()
-    }
+  mounted() {
+    window.GOVUKFrontend.initAll()
+  }
 }
 </script>
 
