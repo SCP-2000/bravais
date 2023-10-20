@@ -1,6 +1,5 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
 </script>
 
 <script>
@@ -14,7 +13,6 @@ export default {
 <template>
   <main>
     <HelloWorld msg="You did it!" />
-    <TheWelcome />
   </main>
 </template>
 
