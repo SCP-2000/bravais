@@ -59,6 +59,6 @@
 
 <style scoped>
 .govuk-accordion {
-  max-width: 50%;
+  max-width:20%;
 }
 </style>
