@@ -76,17 +76,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Center(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: const CardExample(),
+                      child: const CardExample(
+                        title: "I'm a medical professional",
+                        subtitle: "Report on the behavior of my patient",
+                        operation: "Take Survey",
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: const CardExample(),
+                      child: const CardExample(
+                        title: "I'm a medical professional",
+                        subtitle: "Report on the behavior of my patient",
+                        operation: "Analyse Video",
+                      ),
                     ),
                   ]
                 )

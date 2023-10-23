@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 
 class CardExample extends StatelessWidget {
-  const CardExample({super.key});
+  const CardExample({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.operation
+  });
+
+  final String title;
+  final String subtitle;
+  final String operation;
 
   @override
   Widget build(BuildContext context) {
@@ -10,24 +19,21 @@ class CardExample extends StatelessWidget {
         child: Column(
           // mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            const ListTile(
+            ListTile(
               leading: Icon(Icons.album),
-              title: Text('The Enchanted Nightingale'),
-              subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
+              title: Text(this.title),
+              subtitle: Text(this.subtitle),
             ),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                TextButton(
-                  child: const Text('BUY TICKETS'),
-                  onPressed: () {/* ... */},
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  child: const Text('LISTEN'),
-                  onPressed: () {/* ... */},
-                ),
-                const SizedBox(width: 8),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: FilledButton.tonal(
+                    child: Text(this.operation),
+                    onPressed: () {/* ... */},
+                  )
+                )
               ],
             ),
           ],
