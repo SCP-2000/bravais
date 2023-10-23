@@ -20,7 +20,7 @@ class CardExample extends StatelessWidget {
           // mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             ListTile(
-              leading: Icon(Icons.album),
+              // leading: Icon(Icons.album),
               title: Text(this.title),
               subtitle: Text(this.subtitle),
             ),

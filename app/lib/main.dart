@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './card.dart';
+import './learn.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(40, 100, 0, 20),
-              color: const Color(0xff1d70b8),
+              color: Theme.of(context).colorScheme.secondary,
               child: RichText(
                 text: TextSpan(
                   style: TextStyle(color: Colors.white),
@@ -74,6 +75,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )
             ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+              child: RichText(
+                text: TextSpan(
+                  text: 'Getting Started',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                )
+              ),
+            ),
             Center(
               child: Container(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -83,22 +97,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: const CardExample(
-                        title: "I'm a medical professional",
-                        subtitle: "Report on the behavior of my patient",
-                        operation: "Take Survey",
+                        title: "I'm a concerned parent",
+                        subtitle: "video based ASD screening for your child",
+                        operation: "Analyse Video",
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: const CardExample(
                         title: "I'm a medical professional",
-                        subtitle: "Report on the behavior of my patient",
-                        operation: "Analyse Video",
+                        subtitle: "survey based assessment of ASD symptoms",
+                        operation: "Fill Survey",
                       ),
                     ),
                   ]
                 )
               )
+            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+              child: RichText(
+                text: TextSpan(
+                  text: 'Learn More',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                )
+              ),
+            ),
+            Container(
+              child: CustomListItemExample(),
             )
           ],
         ),
