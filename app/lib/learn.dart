@@ -114,9 +114,8 @@ class CustomListItemExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Custom List Item Sample')),
-      body: ListView(
+    return Container(
+      child: ListView(
         padding: const EdgeInsets.all(10.0),
         children: <Widget>[
           CustomListItemTwo(

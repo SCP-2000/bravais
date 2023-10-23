@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ),
             ),
-            Container(
+            Expanded(
               child: CustomListItemExample(),
             )
           ],
