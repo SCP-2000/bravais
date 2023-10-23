@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './card.dart';
 import './learn.dart';
+import './survey.dart';
 
 void main() {
   runApp(const MyApp());
@@ -96,18 +97,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: const CardExample(
+                      child: CardExample(
                         title: "I'm a concerned parent",
                         subtitle: "video based ASD screening for your child",
                         operation: "Analyse Video",
+                        callback: () { print('something'); },
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: const CardExample(
+                      child: CardExample(
                         title: "I'm a medical professional",
                         subtitle: "survey based assessment of ASD symptoms",
                         operation: "Fill Survey",
+                        callback: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Survey()
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ]

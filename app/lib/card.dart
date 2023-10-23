@@ -5,12 +5,15 @@ class CardExample extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
-    required this.operation
+    required this.operation,
+    required this.callback
   });
 
   final String title;
   final String subtitle;
   final String operation;
+
+  final VoidCallback callback;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class CardExample extends StatelessWidget {
                   padding: EdgeInsets.all(8.0),
                   child: FilledButton.tonal(
                     child: Text(this.operation),
-                    onPressed: () {/* ... */},
+                    onPressed: this.callback,
                   )
                 )
               ],
