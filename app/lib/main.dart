@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './card.dart';
 
 void main() {
   runApp(const MyApp());
@@ -71,6 +72,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
+              )
+            ),
+            Center(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: const CardExample(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: const CardExample(),
+                    ),
+                  ]
+                )
               )
             )
           ],
