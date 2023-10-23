@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:html' as html;
 
 class _ArticleDescription extends StatelessWidget {
   const _ArticleDescription({
@@ -118,27 +119,32 @@ class CustomListItemExample extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(10.0),
         children: <Widget>[
-          CustomListItemTwo(
-            thumbnail: Container(
-              decoration: const BoxDecoration(color: Colors.pink),
+          InkWell(
+            child: CustomListItemTwo(
+              thumbnail: Container(
+                decoration: const BoxDecoration(color: Colors.pink),
+              ),
+              title: 'ASD is more common than you think',
+              subtitle: 'One in 36 (2.8%) 8-year-old children have been identified with autism spectrum disorder (ASD), according to an analysis published today in CDC’s Morbidity and Mortality Weekly Report (MMWR).',
+              author: 'CDC',
+              publishDate: 'Mar 23',
+              readDuration: '5 mins',
             ),
-            title: 'Flutter 1.0 Launch',
-            subtitle: 'Flutter continues to improve and expand its horizons. '
-                'This text should max out at two lines and clip',
-            author: 'Dash',
-            publishDate: 'Dec 28',
-            readDuration: '5 mins',
+            onTap: () => html.window.open('https://www.cdc.gov/media/releases/2023/p0323-autism.html', 'new tab')
           ),
-          CustomListItemTwo(
-            thumbnail: Container(
-              decoration: const BoxDecoration(color: Colors.blue),
+          InkWell(
+            child: CustomListItemTwo(
+              thumbnail: Container(
+                decoration: const BoxDecoration(color: Colors.blue),
+              ),
+              title: 'ASD is hard to diagnose',
+              subtitle: 'Diagnosing autism spectrum disorder (ASD) can be difficult since there are no medical tests to diagnose it, and it’s exhibited as a spectrum of closely related symptoms.',
+              author: 'Virtua Health',
+              publishDate: 'Jan 14',
+              readDuration: '3 mins',
             ),
-            title: 'Flutter 1.2 Release - Continual updates to the framework',
-            subtitle: 'Flutter once again improves and makes updates.',
-            author: 'Flutter',
-            publishDate: 'Feb 26',
-            readDuration: '12 mins',
-          ),
+            onTap: () => html.window.open('https://www.virtua.org/articles/why-autism-spectrum-disorder-is-so-hard-to-diagnose', 'new tab')
+          )
         ],
       ),
     );

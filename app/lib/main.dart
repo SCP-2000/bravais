@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(40, 100, 0, 20),
+              padding: const EdgeInsets.fromLTRB(40, 50, 0, 20),
               color: Theme.of(context).colorScheme.secondary,
               child: RichText(
                 text: TextSpan(
