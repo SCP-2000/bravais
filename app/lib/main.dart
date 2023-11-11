@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './card.dart';
 import './learn.dart';
 import './survey.dart';
+import './ai.dart';
 
 void main() {
   runApp(const MyApp());
@@ -101,7 +102,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         title: "I'm a concerned parent",
                         subtitle: "video based ASD screening for your child",
                         operation: "Analyse Video",
-                        callback: () { print('something'); },
+                        callback: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AI()
+                            ),
+                          );
+                        },
                       ),
                     ),
                     Padding(
