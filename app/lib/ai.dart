@@ -169,11 +169,11 @@ class AIState extends State<AI> with WidgetsBindingObserver {
     _inputTensors.elementAt(60).setTo(getImageMatrix(cameraImage));
     _interpreter.invoke();
     var output = [List.filled(600, 0.0)];
-    _interpreter.getOutputTensors().where((x) => x.name == "StatefulPartitionedCall:0").first.copyTo(output);
-    action.value = output[0].indexOf(output[0].reduce(max));
+     _interpreter.getOutputTensors().where((x) => x.name == "StatefulPartitionedCall:0").first.copyTo(output);
     _isProcessing = false;
     if (mounted) {
       setState(() {
+        action.value = output[0].indexOf(output[0].reduce(max));
         // showed_result = .....
       });
     }
