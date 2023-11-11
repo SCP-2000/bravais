@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(40, 50, 0, 20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
               color: Theme.of(context).colorScheme.secondary,
               child: RichText(
                 text: TextSpan(
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       text: 'Welcome to Bravais\n',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 60,
+                        fontSize: 40,
                       ),
                     ),
                     TextSpan(
@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
               child: RichText(
                 text: TextSpan(
                   text: 'Getting Started',
@@ -91,12 +91,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Center(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(4.0),
                       child: CardExample(
                         title: "I'm a concerned parent",
                         subtitle: "video based ASD screening for your child",
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(4.0),
                       child: CardExample(
                         title: "I'm a medical professional",
                         subtitle: "survey based assessment of ASD symptoms",
