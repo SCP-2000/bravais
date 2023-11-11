@@ -7,6 +7,7 @@ class AIState extends State<AI> with WidgetsBindingObserver {
   late final Tensor _inputTensor;
 
   late CameraController controller;
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -23,6 +24,7 @@ class AIState extends State<AI> with WidgetsBindingObserver {
         if (!mounted) {
           return;
         }
+        controller.startImageStream(imageAnalysis);
         setState(() {});
       }).catchError((Object e) {
         if (e is CameraException) {
@@ -43,6 +45,20 @@ class AIState extends State<AI> with WidgetsBindingObserver {
     });
   }
 
+  Future<void> imageAnalysis(CameraImage cameraImage) async {
+    if (_isProcessing) {
+      return;
+    }
+    _isProcessing = true;
+    print(cameraImage);
+    _isProcessing = false;
+    if (mounted) {
+      setState(() {
+        // showed_result = .....
+      });
+    }
+  }
+
   @override
   void dispose() {
     _interpreter.close();
@@ -56,7 +72,11 @@ class AIState extends State<AI> with WidgetsBindingObserver {
       appBar: AppBar(
         title: const Text('AI'),
       ),
-      body: CameraPreview(controller),
+      body: Stack(
+        children: [
+          CameraPreview(controller),
+        ],
+      ),
     );
   }
 }
