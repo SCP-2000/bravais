@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   survey_kit: ^0.1.2
   url_launcher: ^6.2.1
+  tflite_flutter: ^0.10.3
 
 dev_dependencies:
   flutter_test:
