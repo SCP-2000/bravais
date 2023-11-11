@@ -21,7 +21,7 @@
           emulatorVersion = "30.9.0";
           */
           buildToolsVersions = [ "30.0.3" ];
-          platformVersions = [ "33" ];
+          platformVersions = [ "31" "33" ];
         };
       in
       {
