@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 class _ArticleDescription extends StatelessWidget {
   const _ArticleDescription({
@@ -130,7 +130,7 @@ class CustomListItemExample extends StatelessWidget {
               publishDate: 'Mar 23',
               readDuration: '5 mins',
             ),
-            onTap: () => html.window.open('https://www.cdc.gov/media/releases/2023/p0323-autism.html', 'new tab')
+            //onTap: () => html.window.open('https://www.cdc.gov/media/releases/2023/p0323-autism.html', 'new tab')
           ),
           InkWell(
             child: CustomListItemTwo(
@@ -143,7 +143,7 @@ class CustomListItemExample extends StatelessWidget {
               publishDate: 'Jan 14',
               readDuration: '3 mins',
             ),
-            onTap: () => html.window.open('https://www.virtua.org/articles/why-autism-spectrum-disorder-is-so-hard-to-diagnose', 'new tab')
+            //onTap: () => html.window.open('https://www.virtua.org/articles/why-autism-spectrum-disorder-is-so-hard-to-diagnose', 'new tab')
           )
         ],
       ),
