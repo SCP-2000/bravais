@@ -1,224 +1,234 @@
-import 'package:flutter/material.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
+/*
+ * Copyright 2023 The TensorFlow Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *             http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'dart:io';
+
 import 'package:camera/camera.dart';
-import 'package:image/image.dart' as image_lib;
-import 'dart:math';
+import 'package:flutter/material.dart';
+import 'helper/pose_estimation_helper.dart';
+import 'models/person.dart';
 
-class ImageUtils {
-  static const iosBytesOffset = 28;
+import 'models/body_part.dart';
 
-  // Converts a [CameraImage] object to [image_lib.Image] object
-  static image_lib.Image? convertCameraImage(CameraImage cameraImage) {
-    if (cameraImage.format.group == ImageFormatGroup.yuv420) {
-      return convertYUV420ToImage(cameraImage);
-    } else if (cameraImage.format.group == ImageFormatGroup.bgra8888) {
-      return convertBGRA8888ToImage(cameraImage);
-    } else {
-      return null;
-    }
-  }
 
-  // Converts a [CameraImage] in BGRA888 format to [imageLib.Image] in RGB format
-  static image_lib.Image convertBGRA8888ToImage(CameraImage cameraImage) {
-    image_lib.Image img = image_lib.Image.fromBytes(
-        width: cameraImage.planes[0].width!,
-        height: cameraImage.planes[0].height!,
-        bytes: cameraImage.planes[0].bytes.buffer,
-        rowStride: cameraImage.planes[0].bytesPerRow,
-        bytesOffset: iosBytesOffset,
-        order: image_lib.ChannelOrder.bgra);
-    return img;
-  }
+class MyAI extends StatefulWidget {
+  const MyAI({super.key, required this.title});
 
-  // Converts a [CameraImage] in YUV420 format to [imageLib.Image] in RGB format
-  static image_lib.Image convertYUV420ToImage(CameraImage cameraImage) {
-    final imageWidth = cameraImage.width;
-    final imageHeight = cameraImage.height;
-
-    final yBuffer = cameraImage.planes[0].bytes;
-    final uBuffer = cameraImage.planes[1].bytes;
-    final vBuffer = cameraImage.planes[2].bytes;
-
-    final int yRowStride = cameraImage.planes[0].bytesPerRow;
-    final int yPixelStride = cameraImage.planes[0].bytesPerPixel!;
-
-    final int uvRowStride = cameraImage.planes[1].bytesPerRow;
-    final int uvPixelStride = cameraImage.planes[1].bytesPerPixel!;
-
-    final image = image_lib.Image(width: imageWidth, height: imageHeight);
-
-    for (int h = 0; h < imageHeight; h++) {
-      int uvh = (h / 2).floor();
-
-      for (int w = 0; w < imageWidth; w++) {
-        int uvw = (w / 2).floor();
-
-        final yIndex = (h * yRowStride) + (w * yPixelStride);
-
-        // Y plane should have positive values belonging to [0...255]
-        final int y = yBuffer[yIndex];
-
-        // U/V Values are subsampled i.e. each pixel in U/V chanel in a
-        // YUV_420 image act as chroma value for 4 neighbouring pixels
-        final int uvIndex = (uvh * uvRowStride) + (uvw * uvPixelStride);
-
-        // U/V values ideally fall under [-0.5, 0.5] range. To fit them into
-        // [0, 255] range they are scaled up and centered to 128.
-        // Operation below brings U/V values to [-128, 127].
-        final int u = uBuffer[uvIndex];
-        final int v = vBuffer[uvIndex];
-
-        // Compute RGB values per formula above.
-        int r = (y + v * 1436 / 1024 - 179).round();
-        int g = (y - u * 46549 / 131072 + 44 - v * 93604 / 131072 + 91).round();
-        int b = (y + u * 1814 / 1024 - 227).round();
-
-        r = r.clamp(0, 255);
-        g = g.clamp(0, 255);
-        b = b.clamp(0, 255);
-
-        image.setPixelRgb(w, h, r, g, b);
-      }
-    }
-    return image;
-  }
-}
-
-class AIState extends State<AI> with WidgetsBindingObserver {
-  late final Interpreter _interpreter;
-  late final List<Tensor> _inputTensors;
-
-  late CameraController controller;
-  bool _isProcessing = false;
-
-  final ValueNotifier<int> action = ValueNotifier<int>(0);
+  final String title;
 
   @override
-  void initState() {
-    super.initState();
+  State<MyAI> createState() => _MyAIState();
+}
 
+class _MyAIState extends State<MyAI> with WidgetsBindingObserver {
+  CameraController? _cameraController;
+  bool _isProcessing = false;
+  Person? _person;
+  late PoseEstimationHelper _poseEstimationHelper;
+  late CameraDescription _cameraDescription;
 
+  late List<CameraDescription> _cameras;
 
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var _cameras = await availableCameras();
-
-      controller = CameraController(_cameras[0], ResolutionPreset.max);
-      controller.initialize().then((_) {
-        if (!mounted) {
-          return;
-        }
-        controller.startImageStream(imageAnalysis);
+  // init camera
+  _initCamera() {
+    _cameraDescription = _cameras.firstWhere(
+        (element) => element.lensDirection == CameraLensDirection.back);
+    _cameraController = CameraController(
+        _cameraDescription, ResolutionPreset.low,
+        enableAudio: false,
+        imageFormatGroup: Platform.isIOS
+            ? ImageFormatGroup.bgra8888
+            : ImageFormatGroup.yuv420);
+    _cameraController!.initialize().then((value) {
+      _cameraController!.startImageStream(_imageAnalysis);
+      if (mounted) {
         setState(() {});
-      }).catchError((Object e) {
-        if (e is CameraException) {
-          switch (e.code) {
-            case 'CameraAccessDenied':
-              // Handle access errors here.
-              break;
-            default:
-              // Handle other errors here.
-              break;
-          }
-        }
-      });
-
-      _interpreter = await Interpreter.fromAsset('assets/lite-model_movinet_a2_stream_kinetics-600_classification_tflite_float16_2.tflite');
-      _interpreter.allocateTensors();
-      _inputTensors = _interpreter.getInputTensors();
-      //print(_inputTensors.where((x) => x.name == "image"));
+      }
     });
   }
 
-  static getImageMatrix(CameraImage cameraImage) {
-    var origImage = ImageUtils.convertCameraImage(cameraImage)!;
-    var inputImage = image_lib.copyResize(origImage, width: 224, height: 224);
-    final imageMatrix = List.generate(
-      inputImage.height,
-      (y) => List.generate(
-        inputImage.width,
-        (x) {
-          final pixel = inputImage.getPixel(x, y);
-          // normalize -1 to 1
-          return [
-            (pixel.r - 127.5) / 127.5,
-            (pixel.g - 127.5) / 127.5,
-            (pixel.b - 127.5) / 127.5
-          ];
-          //return [pixel.r, pixel.g, pixel.b];
-        },
-      ),
-    );
-
-    return [[imageMatrix]];
-  }
-
-  static Map<int, Object> prepareOutput() {
-    final outputMap = <int, Object>{};
-    return outputMap;
-  }
-
-  Future<void> imageAnalysis(CameraImage cameraImage) async {
+  Future<void> _imageAnalysis(CameraImage cameraImage) async {
+    // if image is still analyze, skip this frame
     if (_isProcessing) {
       return;
     }
     _isProcessing = true;
-    //final outputData = prepareOutput();
-    // print(_inputTensors);
-    //print(_inputTensors.elementAt(60));
-    _inputTensors.elementAt(60).setTo(getImageMatrix(cameraImage));
-    _interpreter.invoke();
-    var output = [List.filled(600, 0.0)];
-     _interpreter.getOutputTensors().where((x) => x.name == "StatefulPartitionedCall:0").first.copyTo(output);
+    final persons = await _poseEstimationHelper.estimatePoses(cameraImage);
     _isProcessing = false;
     if (mounted) {
       setState(() {
-        action.value = output[0].indexOf(output[0].reduce(max));
-        // showed_result = .....
+        _person = persons;
       });
     }
   }
 
+  // this function using config camera and init model
+  _initHelper() async {
+    _initCamera();
+    _poseEstimationHelper = PoseEstimationHelper();
+    await _poseEstimationHelper.initHelper();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _cameras = await availableCameras();
+      await _initHelper();
+    });
+  }
+
+  // handle app lifecycle state change (pause/resume)
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.paused:
+        _cameraController?.stopImageStream();
+        break;
+      case AppLifecycleState.resumed:
+        if (_cameraController != null &&
+            !_cameraController!.value.isStreamingImages) {
+          await _cameraController!.startImageStream(_imageAnalysis);
+        }
+        break;
+      default:
+    }
+  }
+
+  // dispose camera
   @override
   void dispose() {
-    _interpreter.close();
-    controller.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    _cameraController?.dispose();
+    _poseEstimationHelper.close();
     super.dispose();
+  }
+
+  // camera widget to display camera preview and person
+  Widget resultWidget(context) {
+    if (_cameraController == null) return Container();
+
+    final scale = MediaQuery.of(context).size.width /
+        _cameraController!.value.previewSize!.height;
+
+    return Stack(
+      children: [
+        CameraPreview(_cameraController!),
+        _person != null
+            ? CustomPaint(
+                painter: OverlayView(scale: scale)..updatePerson(_person!),
+              )
+            : Container(),
+        Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Spacer(),
+                const Text(
+                  'Model: PoseNet',
+                  textAlign: TextAlign.left,
+                ),
+                Text(
+                  'Score: ${_person?.score.toStringAsFixed(2) ?? 0.00}',
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ))
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI'),
+        backgroundColor: Colors.black.withOpacity(0.5),
       ),
-      body: Stack(
-        children: [
-          CameraPreview(controller),
-          ValueListenableBuilder<int>(
-            valueListenable: action,
-            builder: (BuildContext context, int value, child) {
-              return RichText(
-                text: TextSpan(
-                  text: value.toString(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 40,
-                  ),
-                )
-              );
-            },
-          ),
-        ],
-      ),
+      body: resultWidget(context),
     );
   }
 }
 
-class AI extends StatefulWidget {
-  const AI({super.key});
+class OverlayView extends CustomPainter {
+  OverlayView({required double scale}) : _scale = scale;
+  static const _minConfidence = 0.2;
+  static const _bodyJoints = [
+    [BodyPart.nose, BodyPart.leftEye],
+    [BodyPart.nose, BodyPart.rightEye],
+    [BodyPart.leftEye, BodyPart.leftEar],
+    [BodyPart.rightEye, BodyPart.rightEar],
+    [BodyPart.nose, BodyPart.leftShoulder],
+    [BodyPart.nose, BodyPart.rightShoulder],
+    [BodyPart.leftShoulder, BodyPart.leftElbow],
+    [BodyPart.leftElbow, BodyPart.leftWrist],
+    [BodyPart.rightShoulder, BodyPart.rightElbow],
+    [BodyPart.rightElbow, BodyPart.rightWrist],
+    [BodyPart.leftShoulder, BodyPart.rightShoulder],
+    [BodyPart.leftShoulder, BodyPart.leftHip],
+    [BodyPart.rightShoulder, BodyPart.rightHip],
+    [BodyPart.leftHip, BodyPart.rightHip],
+    [BodyPart.leftHip, BodyPart.leftKnee],
+    [BodyPart.leftKnee, BodyPart.leftAnkle],
+    [BodyPart.rightHip, BodyPart.rightKnee],
+    [BodyPart.rightKnee, BodyPart.rightAnkle]
+  ];
+  final double _scale;
+  Person? _persons;
+
+  final Paint _strokePaint = Paint()
+    ..color = Colors.red
+    ..strokeWidth = 5
+    ..style = PaintingStyle.stroke;
+
+  final Paint _circlePaint = Paint()
+    ..color = Colors.red
+    ..strokeWidth = 3
+    ..style = PaintingStyle.fill;
+
+  updatePerson(Person persons) {
+    _persons = persons;
+  }
 
   @override
-  State<AI> createState() => AIState();
-}
+  void paint(Canvas canvas, Size size) {
+    if (_persons == null) return;
+    // draw circles
+    if (_persons!.score > _minConfidence) {
+      _persons?.keyPoints.forEach((element) {
+        canvas.drawCircle(
+            Offset(
+                element.coordinate.dx * _scale, element.coordinate.dy * _scale),
+            5,
+            _circlePaint);
+      });
+      for (var index in _bodyJoints) {
+        final pointA = _persons?.keyPoints[index[0].index].coordinate;
+        final pointB = _persons?.keyPoints[index[1].index].coordinate;
+        // drawLine
+        if (pointA != null && pointB != null) {
+          canvas.drawLine(Offset(pointA.dx * _scale, pointA.dy * _scale),
+              Offset(pointB.dx * _scale, pointB.dy * _scale), _strokePaint);
+        }
+      }
+    }
+  }
 
+  @override
+  bool shouldRepaint(covariant OverlayView oldDelegate) {
+    return oldDelegate._persons != _persons;
+  }
+}
