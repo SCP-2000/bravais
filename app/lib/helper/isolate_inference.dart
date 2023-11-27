@@ -18,6 +18,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:math';
 import 'dart:ui';
+import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:image/image.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -53,11 +54,11 @@ class IsolateInference {
         (x) {
           final pixel = inputImage.getPixel(x, y);
           // normalize -1 to 1
-          return [
-            (pixel.r - 127.5) / 127.5,
-            (pixel.g - 127.5) / 127.5,
-            (pixel.b - 127.5) / 127.5
-          ];
+          return Float32List.fromList([
+            (pixel.r - 0.0) / 1.0,
+            (pixel.g - 0.0) / 1.0,
+            (pixel.b - 0.0) / 1.0
+          ]);
         },
       ),
     );
@@ -170,17 +171,27 @@ class IsolateInference {
 
       // resize image to map with input shape
       final inputImage = copyResize(originalImage!,
-          width: message.inputShape[2], height: message.inputShape[1]);
+          width: message.inputShape[3], height: message.inputShape[2]);
 
       // convert image to input matrix
       final inputData = getImageMatrix(inputImage);
 
-      // prepare output map for model output
       final outputData = prepareOutput();
 
       Interpreter interpreter =
           Interpreter.fromAddress(message.interpreterAddress);
-      interpreter.runForMultipleInputs([inputData], outputData);
+
+      // interpreter.run([inputData], outputData);
+      interpreter.allocateTensors();
+      var tensor = interpreter.getInputTensor(interpreter.getInputIndex("serving_default_image:0"));
+      tensor.setTo(inputData);
+      interpreter.invoke();
+
+      var outputTensor = interpreter.getOutputTensor(interpreter.getOutputIndex("StatefulPartitionedCall:0"));
+      var output = [List<double>.filled(600, 0)];
+      outputTensor.copyTo(output);
+
+      print(output[0].indexOf(output[0].reduce(max)));
 
       final heatMap = outputData[0] as List<List<List<List<double>>>>;
       final offsets = outputData[1] as List<List<List<List<double>>>>;

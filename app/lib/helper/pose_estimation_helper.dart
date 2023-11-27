@@ -29,8 +29,9 @@ class PoseEstimationHelper {
 
   _loadModel() async {
     _interpreter =
-        await Interpreter.fromAsset('assets/posenet_mobilenet.tflite');
-    _inputTensor = _interpreter.getInputTensors().first;
+        await Interpreter.fromAsset('assets/lite-model_movinet_a2_stream_kinetics-600_classification_tflite_float16_2.tflite');
+    final inputIndex = _interpreter.getInputIndex("serving_default_image:0");
+    _inputTensor = _interpreter.getInputTensor(inputIndex);
   }
 
   initHelper() async {

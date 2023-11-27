@@ -42,7 +42,7 @@ def get_top_k(probs, k=5, label_map=KINETICS_600_LABELS):
 
 # Create the interpreter and get the signature runner.
 interpreter = tf.lite.Interpreter(
-    model_path="models/lite-model_movinet_a2_stream_kinetics-600_classification_tflite_float16_2.tflite"
+    model_path="../app/assets/lite-model_movinet_a2_stream_kinetics-600_classification_tflite_float16_2.tflite"
 )
 
 runner = interpreter.get_signature_runner()
@@ -57,6 +57,7 @@ def quantized_scale(name, state):
     """Scales the named state tensor input for the quantized model."""
     dtype = input_details[name]["dtype"]
     scale, zero_point = input_details[name]["quantization"]
+    print(scale, zero_point)
     if "frame_count" in name or dtype == np.float32 or scale == 0.0:
         return state
     return np.cast((state / scale + zero_point), dtype)
@@ -76,7 +77,7 @@ init_states = {
 states = init_states
 
 
-src = cv2.VideoCapture("/home/nickcao/The Cha Cha Slide Dance [I1gMUbEAUFw].mp4")
+src = cv2.VideoCapture(0)
 
 dst = cv2.VideoWriter(
     "output.webm",
@@ -103,6 +104,8 @@ while True:
     # `logits` will output predictions on each frame.
     logits = outputs.pop("logits")
     states = outputs
+
+   #  print(logits[-1])
 
     labeled = False
     for label, p in get_top_k(logits[-1], k=1):
