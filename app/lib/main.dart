@@ -57,42 +57,29 @@ class _MyHomePageState extends State<MyHomePage> {
                       text: 'Welcome to Bravais\n',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 40,
+                        fontSize: 30,
                       ),
                     ),
                     TextSpan(
                       text: 'The ASD screening app\n',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 15,
                       ),
                     ),
                     TextSpan(
                       text: 'Accurate, Approachable, Affordable',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 15,
                       ),
                     ),
                   ],
                 ),
               )
             ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-              child: RichText(
-                text: TextSpan(
-                  text: 'Getting Started',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                )
-              ),
-            ),
             Center(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                padding: const EdgeInsets.fromLTRB(5, 10, 5, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -116,8 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(4.0),
                       child: CardExample(
                         title: "I'm a medical professional",
-                        subtitle: "survey based assessment of ASD symptoms",
-                        operation: "Fill Survey",
+                        subtitle: "checklist based assessment of ASD symptoms",
+                        operation: "Fill checklist",
                         callback: () {
                           Navigator.push(
                             context,
@@ -132,22 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               )
             ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
-              child: RichText(
-                text: TextSpan(
-                  text: 'Learn More',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                )
-              ),
-            ),
             Expanded(
               child: CustomListItemExample(),
-            )
+            ),
           ],
         ),
       ),
