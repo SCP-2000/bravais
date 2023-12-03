@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:survey_kit/survey_kit.dart';
+import './result.dart';
 
 // ref: http://www.pediatricminds.com/wp-content/uploads/2011/06/Developmental-and-Behavioral-Questionnaire-for-Autism-Spectrum-Disorders.pdf
 // ref: https://aseba.org/wp-content/uploads/CBCL_6-18_201-sample-copy-watermark-1.pdf
@@ -12,111 +13,73 @@ class Survey extends StatelessWidget {
   Widget build(BuildContext context) {
     var steps = [
         InstructionStep(
-            title: 'Child Behavior Checklist',
-            text: 'Adapted for use in bravais',
-            buttonText: 'Start survey',
+            title: 'ASD checklist',
+            text: 'Adapted from Child Behavior Checklist, a well established measure of behavioral problems in children, which has demonstrated moderate to high sensitivity and specificity in ASD diagnosis according to a study in Singapore',
+            buttonText: 'Start',
         ),
         QuestionStep(
             title: 'Sports',
             text: 'Compared to others of the same age, about how much time does child spend in sports? For example: swimming, baseball, skating, skate boarding, bike riding, fishing, etc.',
-            answerFormat: SingleChoiceAnswerFormat(
+            answerFormat: const SingleChoiceAnswerFormat(
               textChoices: [
-                TextChoice(text: 'Less Than Average', value: "less"),
-                TextChoice(text: 'Average', value: "average"),
-                TextChoice(text: 'More Than Average', value: "more"),
-                TextChoice(text: 'Don\'t know', value: "na"),
+                TextChoice(text: 'Less Than Average', value: "2"),
+                TextChoice(text: 'Average', value: "1"),
+                TextChoice(text: 'More Than Average', value: "0"),
               ]
             )
         ),
         QuestionStep(
             title: 'Hobbies',
             text: 'Compared to others of the same age, about how much time does child spend in other hobbies? For example: video games, dolls, reading, piano, crafts, cars, etc.',
-            answerFormat: SingleChoiceAnswerFormat(
+            answerFormat: const SingleChoiceAnswerFormat(
               textChoices: [
-                TextChoice(text: 'Less Than Average', value: "less"),
-                TextChoice(text: 'Average', value: "average"),
-                TextChoice(text: 'More Than Average', value: "more"),
-                TextChoice(text: 'Don\'t know', value: "na"),
+                TextChoice(text: 'Less Than Average', value: "2"),
+                TextChoice(text: 'Average', value: "1"),
+                TextChoice(text: 'More Than Average', value: "0"),
               ]
             )
         ),
+      QuestionStep(
+          title: 'Social activities',
+          text: 'About how many times a week does your child do things with any friends outside of regular school hours?',
+          answerFormat: const SingleChoiceAnswerFormat(
+              textChoices: [
+                TextChoice(text: 'Less Than 1', value: "2"),
+                TextChoice(text: '1 or 2', value: "1"),
+                TextChoice(text: '3 or more', value: "0"),
+              ]
+          )
+      ),
+
         QuestionStep(
-            title: 'Hyperactive',
-            text: 'Can’t sit still, restless, or hypeactive',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
+            title: 'Emotional',
+            text: 'Prone to meltdowns, tantrums, violence, aggression, or rage. For example, cries, argues or screams a lot',
+            answerFormat: const SingleChoiceAnswerFormat(
+                textChoices: [
+                  TextChoice(text: 'Yes', value: "2"),
+                  TextChoice(text: 'No', value: "0"),
+                ]
+            )
         ),
         QuestionStep(
-            title: 'Cry',
-            text: 'Cries a lot',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
+            title: 'Sleep deprivation',
+            text: 'Inadequate or insufficient sleep sustained over a period of time.(9-12 hours of sleeping time is recommended for 6-12 years, and 8-10 hours for 13-18 years)',
+            answerFormat: const SingleChoiceAnswerFormat(
+                textChoices: [
+                  TextChoice(text: 'Yes', value: "1"),
+                  TextChoice(text: 'No', value: "0"),
+                ]
+            )
         ),
-        QuestionStep(
-            title: 'Scream',
-            text: 'Screams a lot',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
-        ),
-        QuestionStep(
-            title: 'Bite',
-            text: 'Bites fingernails',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
-        ),
-        QuestionStep(
-            title: 'Vomit',
-            text: 'Vomiting, throwing up',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
-        ),
-        QuestionStep(
-            title: 'Attack',
-            text: 'Physically attacks people',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
-        ),
-        QuestionStep(
-            title: 'Pick',
-            text: 'Picks nose, skin, or other parts of body',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
-        ),
-        QuestionStep(
-            title: 'Repeat',
-            text: 'Repeats certain acts over and over',
-            answerFormat: BooleanAnswerFormat(
-              positiveAnswer: 'Yes',
-              negativeAnswer: 'No',
-              result: BooleanResult.POSITIVE,
-            ),
-        ),
+
+
+
+
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'complete'),
           text: 'Thanks for taking the survey, result will be available soon.',
           title: 'Completed',
-          buttonText: 'Submit survey',
+          buttonText: 'Submit',
         ),
     ];
     var task = OrderedTask(
@@ -125,11 +88,23 @@ class Survey extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second Route'),
+        title: const Text('ASD checklist'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
-          Navigator.pop(context);
+          var sum = 0;
+          for (final taskResult in result.results) {
+            for (final questionResult in taskResult.results) {
+              if (questionResult.result is TextChoice) {
+                final choice = (questionResult.result as TextChoice).value;
+                final score = int.parse(choice);
+                sum += score;
+              }
+            }
+          }
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => ChecklistResult(score: sum),
+          ));
         },
         task: task,
       )
